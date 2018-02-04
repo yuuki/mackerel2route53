@@ -9,9 +9,9 @@ import (
 // MackerelWebhookRequest represents a webhook request for Mackerel.
 // https://mackerel.io/ja/docs/entry/howto/alerts/webhook
 type MackerelWebhookRequest struct {
-	OrgName     string `json:"orgName"`
-	Event       string `json:"event"`
-	WebhookHost string `json:"host"`
+	OrgName string               `json:"orgName"`
+	Event   string               `json:"event"`
+	Host    *MackerelWebhookHost `json:"host"`
 }
 
 // MackerelWebhookHost contains identity information for the Mackerel host.
