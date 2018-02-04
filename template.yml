@@ -4,7 +4,14 @@ Resources:
   App:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: main
+      Handler: lambda-mackerel2route53
       Runtime: go1.x
-      CodeUri: build
-      Timeout: 1
+      Timeout: 15
+      MemorySize: 128
+      CodeUri: build/
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /
+            Method: post
