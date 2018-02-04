@@ -4,7 +4,8 @@ Resources:
   App:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: lambda-mackerel2route53
+      FunctionName: mackerel-webhook-gateway
+      Handler: mackerel-webhook-gateway
       Runtime: go1.x
       Timeout: 15
       MemorySize: 128
