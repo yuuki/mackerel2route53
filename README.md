@@ -1,5 +1,5 @@
-sabadns
-=======
+mackerel2route53
+================
 
 Serverless internal DNS environment using by [Mackerel](https://mackerel.io) + Amazon Route53 + Amazon API Gateway + AWS Lambda.
 
