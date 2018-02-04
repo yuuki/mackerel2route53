@@ -1,25 +1,45 @@
 package main
 
 import (
-	"context"
-	"fmt"
-
-	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func mackerelWebHookHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	fmt.Printf("Processing request data for request %s.\n", request.RequestContext.RequestID)
-	fmt.Printf("Body size = %d.\n", len(request.Body))
-
-	fmt.Println("Headers:")
-	for key, value := range request.Headers {
-		fmt.Printf("    %s: %s\n", key, value)
-	}
-
-	return events.APIGatewayProxyResponse{Body: request.Body, StatusCode: 200}, nil
+// MackerelWebhookRequest represents a webhook request for Mackerel.
+// https://mackerel.io/ja/docs/entry/howto/alerts/webhook
+type MackerelWebhookRequest struct {
+	OrgName     string `json:"orgName"`
+	Event       string `json:"event"`
+	WebhookHost string `json:"host"`
 }
 
+// MackerelWebhookHost contains identity information for the Mackerel host.
+type MackerelWebhookHost struct {
+	ID        string                 `json:"id"`
+	Name      string                 `json:"name"`
+	URL       string                 `json:"url"`
+	Type      string                 `json:"type"`
+	Status    string                 `json:"status"`
+	Memo      string                 `json:"memo"`
+	IsRetired bool                   `json:"isRetired"`
+	Roles     []*MackerelWebhookRole `json:"roles"`
+}
+
+// MackerelWebhookRole contains identity information for the Mackerel host's role.
+type MackerelWebhookRole struct {
+	Fullname    string `json:"fullname"`
+	ServiceName string `json:"serviceName"`
+	ServiceURL  string `json:"serviceUrl"`
+	RoleName    string `json:"roleName"`
+	RoleURL     string `json:"roleUrl"`
+}
+
+type Response struct {
+	Message string
+}
+
+func mackerelWebhookHandler(req MackerelWebhookRequest) (Response, error) {
+	return Response{Message: "success"}, nil
+}
 func main() {
-	lambda.Start(mackerelWebHookHandler)
+	lambda.Start(mackerelWebhookHandler)
 }
