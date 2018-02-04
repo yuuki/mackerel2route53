@@ -4,7 +4,7 @@ Resources:
   App:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: lambda-go-sample
+      Handler: main
       Runtime: go1.x
       CodeUri: build
       Timeout: 1
