@@ -1,6 +1,6 @@
 .PHONY: build-linux
 build-linux:
-	GOOS=linux GOARCH=amd64 go build -s -w -o build/lambda-mackerel2route53
+	GOOS=linux GOARCH=amd64 go build -o build/lambda-mackerel2route53 -ldflags '-s -w' ./...
 
 .PHONY: deploy
 deploy: build-linux
