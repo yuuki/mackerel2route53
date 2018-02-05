@@ -54,9 +54,15 @@
   packages = ["."]
   revision = "0b12d6b5"
 
+[[projects]]
+  branch = "master"
+  name = "github.com/mackerelio/mackerel-client-go"
+  packages = ["."]
+  revision = "984eab80e4f63ba8a9a3ad8cca7ec1b36c71580a"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "72dc619fbdc560ea8ca9758ee5e6f389f003b93caeaa99dafdf9d659d1d98936"
+  inputs-digest = "e48c00b260fa8fdc731223f6266618a71821f1eb75af7c3c6fcbec0b42df918e"
   solver-name = "gps-cdcl"
   solver-version = 1
