@@ -1,0 +1,17 @@
+[
+    {
+        "ParameterKey": "ZoneName",
+        "ParameterValue": "$MACKEREL2ROUTE53_ZONE_NAME",
+        "UsePreviousValue": false
+    },
+    {
+        "ParameterKey": "VPCID",
+        "ParameterValue": "$MACKEREL2ROUTE53_VPC_ID",
+        "UsePreviousValue": false
+    },
+    {
+        "ParameterKey": "VPCRegion",
+        "ParameterValue": "$MACKEREL2ROUTE53_VPC_REGION",
+        "UsePreviousValue": false
+    }
+]

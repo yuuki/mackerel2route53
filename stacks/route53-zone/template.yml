@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: mackerel2route53-zone
+Parameters:
+  ZoneName:
+    Type: String
+    Default: "mkr.internal"
+  VPCID:
+    Type: String
+  VPCRegion:
+    Type: String
+  # TODO: multiple vpc support
+Resources:
+  DNS:
+    Type: "AWS::Route53::HostedZone"
+    Properties: 
+      HostedZoneConfig: 
+        Comment: "mackerel2route53 hosted zone"
+      Name: !Ref ZoneName
+      VPCs: 
+        - 
+          VPCId: !Ref VPCID
+          VPCRegion: !Ref VPCRegion
+Outputs:
+  ZoneID:
+    Value: !Ref DNS
+  ZoneName:
+    Value: !Ref ZoneName
