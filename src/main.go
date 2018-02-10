@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -137,10 +140,17 @@ func deleteRecord(host *MackerelWebhookHost) error {
 	return nil
 }
 
-func mackerelWebhookHandler(req MackerelWebhookRequest) (Response, error) {
+func mackerelWebhookHandler(ctx context.Context, gwReq events.APIGatewayProxyRequest) (Response, error) {
 	if zoneID = os.Getenv("MACKEREL2ROUTE53_ZONE_ID"); zoneID == "" {
 		return Response{Message: "configuration error"}, errors.New("MACKEREL2ROUTE53_ZONE_ID is empty")
 	}
+
+	var req MackerelWebhookRequest
+	if err := json.Unmarshal([]byte(gwReq.Body), &req); err != nil {
+		return Response{Message: "json decode error"}, errors.New("failed to decode json")
+	}
+
+	log.Printf("%+v\n", req)
 
 	switch req.Event {
 	case "hostRegister":
@@ -155,6 +165,9 @@ func mackerelWebhookHandler(req MackerelWebhookRequest) (Response, error) {
 		if err := deleteRecord(req.Host); err != nil {
 			return Response{Message: "failed to delete Route53 record"}, err
 		}
+	default:
+		err := fmt.Errorf("invalid webhook request event: %s", req.Event)
+		return Response{Message: err.Error()}, err
 	}
 	return Response{Message: "success"}, nil
 }
