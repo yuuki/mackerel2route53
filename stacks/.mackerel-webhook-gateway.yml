@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  App:
+    Properties:
+      CodeUri: s3://yuuki-lambda-packages/mackerel2route53/58319355d56a5c43a44c35c4f1a87784
+      Events:
+        GetResource:
+          Properties:
+            Method: post
+            Path: /
+          Type: Api
+      FunctionName: mackerel-webhook-gateway
+      Handler: mackerel-webhook-gateway
+      MemorySize: 128
+      Runtime: go1.x
+      Timeout: 15
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
