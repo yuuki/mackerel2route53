@@ -9,7 +9,7 @@ Resources:
       Runtime: go1.x
       Timeout: 15
       MemorySize: 128
-      CodeUri: build/
+      CodeUri: ../build/
       Events:
         GetResource:
           Type: Api
