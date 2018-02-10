@@ -23,5 +23,9 @@ Resources:
 Outputs:
   ZoneID:
     Value: !Ref DNS
+    Export:
+      Name: !Sub "${AWS::StackName}:ZoneID"
   ZoneName:
     Value: !Ref ZoneName
+    Export:
+      Name: !Sub "${AWS::StackName}:ZoneName"
