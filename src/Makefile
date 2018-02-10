@@ -4,7 +4,6 @@ FUNC_NAME := mackerel-webhook-gateway
 dep:
 	dep ensure
 
-.PHONY: build-function
-build-function:
+.PHONY: build
+build:
 	GOOS=linux GOARCH=amd64 go build -o ../build/$(FUNC_NAME) -ldflags '-s -w' ./...
-

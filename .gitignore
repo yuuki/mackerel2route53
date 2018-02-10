@@ -1,2 +1,2 @@
 /build
-/templates/.*.yml
+/stacks/*/.*.yml

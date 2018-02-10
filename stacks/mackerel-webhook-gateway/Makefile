@@ -4,14 +4,15 @@ GATEWAY_ID := $(shell aws apigateway get-rest-apis | jq -rM '.items[] | select(.
 GATEWAY_URL := https://$(GATEWAY_ID).execute-api.ap-northeast-1.amazonaws.com/Prod
 
 .PHONY: deploy
-deploy: build-function
+deploy:
+	(cd ../../src; make build)
 	aws cloudformation package \
-		--template-file templates/mackerel-webhook-gateway.yml \
+		--template-file template.yml \
 		--s3-bucket yuuki-lambda-packages \
 		--s3-prefix $(PROJECT) \
-		--output-template-file templates/.mackerel-webhook-gateway.yml
+		--output-template-file .template.yml
 	aws cloudformation deploy \
-		--template-file templates/.mackerel-webhook-gateway.yml \
+		--template-file .template.yml \
 		--stack-name $(PROJECT) \
 		--capabilities CAPABILITY_IAM
 

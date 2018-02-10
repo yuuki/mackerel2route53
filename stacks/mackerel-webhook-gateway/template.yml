@@ -9,7 +9,11 @@ Resources:
       Runtime: go1.x
       Timeout: 15
       MemorySize: 128
-      CodeUri: ../build/
+      CodeUri: ../../build/
+      Environment:
+        Variables:
+          MACKEREL2ROUTE53_ZONE_ID: !ImportValue 'mackerel2route53-zones:ZoneID'
+          MACKEREL2ROUTE53_ZONE_NAME: !ImportValue 'mackerel2route53-zones:ZoneName'
       Events:
         GetResource:
           Type: Api

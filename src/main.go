@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
@@ -52,7 +54,8 @@ const (
 )
 
 var (
-	svc *route53.Route53
+	zoneID string
+	svc    *route53.Route53
 )
 
 func init() {
@@ -96,7 +99,7 @@ func createRecord(host *MackerelWebhookHost) error {
 				},
 			},
 		},
-		HostedZoneId: aws.String("Z3M3LMPEXAMPLE"), // FIXME
+		HostedZoneId: aws.String(zoneID),
 	}
 	_, err = svc.ChangeResourceRecordSets(input)
 	if err != nil {
@@ -135,6 +138,10 @@ func deleteRecord(host *MackerelWebhookHost) error {
 }
 
 func mackerelWebhookHandler(req MackerelWebhookRequest) (Response, error) {
+	if zoneID = os.Getenv("MACKEREL2ROUTE53_ZONE_ID"); zoneID == "" {
+		return Response{Message: "configuration error"}, errors.New("MACKEREL2ROUTE53_ZONE_ID is empty")
+	}
+
 	switch req.Event {
 	case "hostRegister":
 		if err := createRecord(req.Host); err != nil {
