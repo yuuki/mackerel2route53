@@ -1,5 +1,8 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: 'AWS::Serverless-2016-10-31'
+Parameters:
+  MackerelAPIKey:
+    Type: String
 Resources:
   App:
     Type: 'AWS::Serverless::Function'
@@ -10,8 +13,23 @@ Resources:
       Timeout: 15
       MemorySize: 128
       CodeUri: ../../build/
+      Policies:
+        -
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Action:
+                - "route53:GetChange"
+                - "route53:ChangeResourceRecordSets"
+                - "route53:ListResourceRecordSets"
+              Resource:
+                - !Sub
+                  - "arn:aws:route53:::hostedzone/${ZoneID}"
+                  - { ZoneID: !ImportValue 'mackerel2route53-zones:ZoneID' }
       Environment:
         Variables:
+          MACKEREL2ROUTE53_MACKEREL_API_KEY: !Ref MackerelAPIKey
           MACKEREL2ROUTE53_ZONE_ID: !ImportValue 'mackerel2route53-zones:ZoneID'
           MACKEREL2ROUTE53_ZONE_NAME: !ImportValue 'mackerel2route53-zones:ZoneName'
       Events:

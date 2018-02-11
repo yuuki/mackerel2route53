@@ -13,6 +13,7 @@ deploy:
 		--output-template-file .template.yml
 	aws cloudformation deploy \
 		--template-file .template.yml \
+		--parameter-overrides 'MackerelAPIKey=$(MACKEREL2ROUTE53_MACKEREL_API_KEY)' \
 		--stack-name $(PROJECT) \
 		--capabilities CAPABILITY_IAM
 

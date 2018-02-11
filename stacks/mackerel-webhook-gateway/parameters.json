@@ -1,0 +1,7 @@
+[
+    {
+        "ParameterKey": "MackerelAPIKey",
+        "ParameterValue": "$MACKEREL2ROUTE53_MACKEREL_API_KEY",
+        "UsePreviousValue": false
+    }
+]

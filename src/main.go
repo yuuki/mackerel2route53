@@ -57,16 +57,20 @@ const (
 )
 
 var (
-	zoneID string
-	svc    *route53.Route53
+	mackerelAPIKey string
+	zoneID         string
+	svc            *route53.Route53
 )
 
 func init() {
+	if mackerelAPIKey = os.Getenv("MACKEREL2ROUTE53_MACKEREL_API_KEY"); mackerelAPIKey == "" {
+		panic(errors.New("MACKEREL2ROUTE53_MACKEREL_API_KEY is empty"))
+	}
 	svc = route53.New(session.New())
 }
 
 func findIPAddressFromMackerel(hostID string) (string, error) {
-	client := mkr.NewClient("API-KEY")
+	client := mkr.NewClient(mackerelAPIKey)
 	host, err := client.FindHost(hostID)
 	if err != nil {
 		return "", err
@@ -84,6 +88,7 @@ func createRecord(host *MackerelWebhookHost) error {
 	if err != nil {
 		return err
 	}
+
 	input := &route53.ChangeResourceRecordSetsInput{
 		ChangeBatch: &route53.ChangeBatch{
 			Changes: []*route53.Change{
