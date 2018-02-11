@@ -64,7 +64,12 @@ var (
 
 func init() {
 	if mackerelAPIKey = os.Getenv("MACKEREL2ROUTE53_MACKEREL_API_KEY"); mackerelAPIKey == "" {
-		panic(errors.New("MACKEREL2ROUTE53_MACKEREL_API_KEY is empty"))
+		log.Println("MACKEREL2ROUTE53_MACKEREL_API_KEY is empty")
+		os.Exit(1)
+	}
+	if zoneID = os.Getenv("MACKEREL2ROUTE53_ZONE_ID"); zoneID == "" {
+		log.Println("MACKEREL2ROUTE53_ZONE_ID is empty")
+		os.Exit(1)
 	}
 	svc = route53.New(session.New())
 }
@@ -146,10 +151,6 @@ func deleteRecord(host *MackerelWebhookHost) error {
 }
 
 func mackerelWebhookHandler(ctx context.Context, gwReq events.APIGatewayProxyRequest) (Response, error) {
-	if zoneID = os.Getenv("MACKEREL2ROUTE53_ZONE_ID"); zoneID == "" {
-		return Response{Message: "configuration error"}, errors.New("MACKEREL2ROUTE53_ZONE_ID is empty")
-	}
-
 	var req MackerelWebhookRequest
 	if err := json.Unmarshal([]byte(gwReq.Body), &req); err != nil {
 		return Response{Message: "json decode error"}, errors.New("failed to decode json")
