@@ -24,7 +24,7 @@ Resources:
                 - "route53:ChangeResourceRecordSets"
                 - "route53:ListResourceRecordSets"
               Resource:
-                - !Sub
+                - Fn::Sub: # https://github.com/awslabs/aws-sam-local/issues/135
                   - "arn:aws:route53:::hostedzone/${ZoneID}"
                   - { ZoneID: !ImportValue 'mackerel2route53-zones:ZoneID' }
       Environment:
