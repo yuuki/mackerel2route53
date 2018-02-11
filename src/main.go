@@ -125,25 +125,11 @@ func createRecord(host *MackerelWebhookHost) error {
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {
-			case route53.ErrCodeNoSuchHostedZone:
-				fmt.Println(route53.ErrCodeNoSuchHostedZone, aerr.Error())
-			case route53.ErrCodeNoSuchHealthCheck:
-				fmt.Println(route53.ErrCodeNoSuchHealthCheck, aerr.Error())
-			case route53.ErrCodeInvalidChangeBatch:
-				fmt.Println(route53.ErrCodeInvalidChangeBatch, aerr.Error())
-			case route53.ErrCodeInvalidInput:
-				fmt.Println(route53.ErrCodeInvalidInput, aerr.Error())
 			case route53.ErrCodePriorRequestNotComplete:
-				fmt.Println(route53.ErrCodePriorRequestNotComplete, aerr.Error())
-			default:
-				fmt.Println(aerr.Error())
+				//TODO wait&retry?
 			}
-		} else {
-			// Print the error, cast err to awserr.Error to get the Code and
-			// Message from an error.
-			fmt.Println(err.Error())
 		}
-		return nil
+		return err
 	}
 
 	return nil
