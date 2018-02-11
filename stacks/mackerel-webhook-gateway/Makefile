@@ -28,3 +28,7 @@ logs:
 .PHONY: getway-url
 gateway-url:
 	@echo $(GATEWAY_URL)
+
+.PHONY: local-invoke
+local-invoke:
+	../../script/envfile ../../config.env sam local invoke 'App'

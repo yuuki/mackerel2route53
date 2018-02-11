@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e -o pipefail
+
+# - Usage:
+#  envfile ENV_FILE_PATH CMD
+#
+# - ENV_FILE format
+# $ cat /etc/default/aws
+# AWS_ACCESS_KEY_ID='xxxxxx'
+# AWS_ACCESS_SECKRET_KEY='yyyyyy'
+# AWS_REGION=ap-northeast-1
+
+env_file_path="$1"
+cmd="${@:2:($#-1)}"
+
+if [ -z "${cmd}" ]; then
+    echo 'CMD required' >&2
+    exit 1
+fi
+
+for i in $(grep -v '^#' "${env_file_path}" | xargs); do
+    export "$i"
+done
+exec ${cmd}
