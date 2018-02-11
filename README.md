@@ -6,3 +6,7 @@ Serverless internal DNS environment using by [Mackerel](https://mackerel.io) + A
 ```
 Mackerel -> (webhook) -> API Gateway -> Lambda -> Route53 (Private Hosted Zone)
 ```
+
+## License
+
+[Apache License Version 2.0](./LICENSE).
