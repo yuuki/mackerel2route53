@@ -124,6 +124,7 @@ func createRecord(host *MackerelWebhookHost) error {
 	_, err = svc.ChangeResourceRecordSets(input)
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
+			log.Println(aerr)
 			switch aerr.Code() {
 			case route53.ErrCodePriorRequestNotComplete:
 				//TODO wait&retry?
@@ -136,10 +137,50 @@ func createRecord(host *MackerelWebhookHost) error {
 }
 
 func updateRecord(host *MackerelWebhookHost, fromStatus string) error {
+	log.Printf("updateRecord: %+v, %v\n", host, fromStatus)
+
 	return nil
 }
 
 func deleteRecord(host *MackerelWebhookHost) error {
+	log.Printf("deleteRecord: %+v\n", host)
+
+	ipaddr, err := findIPAddressFromMackerel(host.ID)
+	if err != nil {
+		return err
+	}
+
+	input := &route53.ChangeResourceRecordSetsInput{
+		ChangeBatch: &route53.ChangeBatch{
+			Changes: []*route53.Change{
+				{
+					Action: aws.String("DELETE"),
+					ResourceRecordSet: &route53.ResourceRecordSet{
+						Name: aws.String(host.Name),
+						Type: aws.String("A"),
+						ResourceRecords: []*route53.ResourceRecord{
+							{
+								Value: aws.String(ipaddr),
+							},
+						},
+						TTL: aws.Int64(dnsRecordTTL),
+					},
+				},
+			},
+		},
+		HostedZoneId: aws.String(zoneID),
+	}
+	if _, err := svc.ChangeResourceRecordSets(input); err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			log.Println(aerr)
+			switch aerr.Code() {
+			case route53.ErrCodePriorRequestNotComplete:
+				//TODO wait&retry?
+			}
+		}
+		return err
+	}
+
 	return nil
 }
 
