@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -72,6 +71,14 @@ func init() {
 		os.Exit(1)
 	}
 	svc = route53.New(session.New())
+}
+
+func response(code int, msg string) events.APIGatewayProxyResponse {
+	return events.APIGatewayProxyResponse{
+		StatusCode: code,
+		Body:       fmt.Sprintf("{\"message\":\"%s\"}", msg),
+		Headers:    map[string]string{"Content-Type": "application/json"},
+	}
 }
 
 func findIPAddressFromMackerel(hostID string) (string, error) {
@@ -150,10 +157,10 @@ func deleteRecord(host *MackerelWebhookHost) error {
 	return nil
 }
 
-func mackerelWebhookHandler(ctx context.Context, gwReq events.APIGatewayProxyRequest) (Response, error) {
+func mackerelWebhookHandler(ctx context.Context, gwReq events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var req MackerelWebhookRequest
 	if err := json.Unmarshal([]byte(gwReq.Body), &req); err != nil {
-		return Response{Message: "json decode error"}, errors.New("failed to decode json")
+		return response(400, "json decode error"), err
 	}
 
 	log.Printf("%+v\n", req)
@@ -161,21 +168,21 @@ func mackerelWebhookHandler(ctx context.Context, gwReq events.APIGatewayProxyReq
 	switch req.Event {
 	case "hostRegister":
 		if err := createRecord(req.Host); err != nil {
-			return Response{Message: "failed to create Route53 record"}, err
+			return response(500, "Route53 record creation error"), err
 		}
 	case "hostStatus":
 		if err := updateRecord(req.Host, req.FromStatus); err != nil {
-			return Response{Message: "failed to update Route53 record"}, err
+			return response(500, "Route53 record update error"), err
 		}
 	case "hostRetire":
 		if err := deleteRecord(req.Host); err != nil {
-			return Response{Message: "failed to delete Route53 record"}, err
+			return response(500, "Route53 record delete error"), err
 		}
 	default:
 		err := fmt.Errorf("invalid webhook request event: %s", req.Event)
-		return Response{Message: err.Error()}, err
+		return response(400, err.Error()), err
 	}
-	return Response{Message: "success"}, nil
+	return response(200, "success"), nil
 }
 func main() {
 	lambda.Start(mackerelWebhookHandler)
