@@ -8,7 +8,11 @@ build:
 	(cd ../../src; make build)
 
 .PHONY: deploy
-deploy: build
+deploy:
+	@../../script/envfile ../../config.env make _deploy
+
+.PHONY: _deploy
+_deploy: build
 	aws cloudformation package \
 		--template-file template.yml \
 		--s3-bucket $(MACKEREL2ROUTE53_FUNCTION_S3_BUCKET) \

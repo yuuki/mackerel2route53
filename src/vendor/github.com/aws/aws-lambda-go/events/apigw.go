@@ -84,7 +84,12 @@ type APIGatewayCustomAuthorizerPolicy struct {
 }
 
 type IAMPolicyStatement struct {
-	Action   []string
-	Effect   string
-	Resource []string
+	Action    []string
+	Effect    string
+	Condition TestCondition
+	Resource  []string
+}
+
+type TestCondition struct {
+	IpAddress map[string][]string
 }
