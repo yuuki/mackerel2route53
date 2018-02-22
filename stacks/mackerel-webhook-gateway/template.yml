@@ -4,6 +4,39 @@ Parameters:
   MackerelAPIKey:
     Type: String
 Resources:
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        swagger: 2.0
+        info:
+          title: !Ref AWS::StackName
+          schemes:
+            - "https"
+        securityDefinitions:
+          mackerel-webhook-authorizer:
+            type: apiKey
+            name: Authorization
+            in: header
+            x-amazon-apigateway-authtype: custom
+            x-amazon-apigateway-authorizer:
+              type: request
+              identitySource: method.request.header.Authorization
+              authorizerUri:
+                Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Authorizer.Arn}/invocations
+              authorizerResultTtlInSeconds: 5
+        paths:
+          "/":
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: post
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${App.Arn}/invocations
+              responses: {}
+              security:
+                - mackerel-webhook-authorizer: []
   App:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -38,3 +71,21 @@ Resources:
           Properties:
             Path: /
             Method: post
+            RestApiId: !Ref Api
+  Authorizer:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: mackerel-webhook-authorizer
+      Handler: mackerel-webhook-authorizer
+      Runtime: go1.x
+      Timeout: 15
+      MemorySize: 128
+      CodeUri: ../../build/
+  AuthorizerPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - Authorizer
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Authorizer
+      Principal: apigateway.amazonaws.com

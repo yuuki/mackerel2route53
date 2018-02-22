@@ -9,8 +9,8 @@
     "lambda/messages",
     "lambdacontext"
   ]
-  revision = "6e2e37798efbb1dfd8e9c6681702e683a6046517"
-  version = "v1.0.1"
+  revision = "fafa7e49388b8991caf99308e80655ba91816b72"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
@@ -64,6 +64,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "11290b509762dedbb3c9ec70cf2325ce8fc4ea6d5c04991fbc3666e885e1caea"
+  inputs-digest = "d81da39ec8ae21a87229eb6b489338de49bfb2914cdd4557cd3d9eb577946b09"
   solver-name = "gps-cdcl"
   solver-version = 1
